@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS STORE — APK Bug & Premium</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script>
+tailwind.config = {
+theme: {
+extend: {
+fontFamily: {
+comic: ['Bangers', 'cursive'],
+sans: ['Plus Jakarta Sans', 'sans-serif'],
+mono: ['JetBrains Mono', 'monospace'],
+},
+colors: {
+comicBg: 'var(--theme-bg, #FDFBF7)',
+comicDark: '#121212',
+comicRed: 'var(--theme-accent, #EF4444)',
+comicYellow: 'var(--theme-yellow, #FACC15)'
+}
+}
+}
+}
+</script>
+<style>
+:root {
+--theme-bg: #FDFBF7;
+--theme-card: #FFFFFF;
+--theme-accent: #EF4444;
+--theme-yellow: #FACC15;
+--theme-pattern: radial-gradient(#d6d3d1 1.2px, transparent 1.2px);
+}
+body.theme-cyberpunk {
+--theme-bg: #090d16;
+--theme-card: #111827;
+--theme-accent: #38bdf8;
+--theme-yellow: #f43f5e;
+--theme-pattern: radial-gradient(#1e293b 1.5px, transparent 1.5px);
+color: #f8fafc !important;
+}
+body.theme-mint {
+--theme-bg: #f0fdf4;
+--theme-card: #ffffff;
+--theme-accent: #16a34a;
+--theme-yellow: #fde047;
+--theme-pattern: radial-gradient(#bbf7d0 1.5px, transparent 1.5px);
+}
+body.theme-sunset {
+--theme-bg: #fff1f2;
+--theme-card: #ffffff;
+--theme-accent: #e11d48;
+--theme-yellow: #fb923c;
+--theme-pattern: radial-gradient(#fed7aa 1.5px, transparent 1.5px);
+}
+body {
+background-color: var(--theme-bg);
+color: #121212;
+font-family: 'Plus Jakarta Sans', sans-serif;
+overflow-x: hidden;
+background-image: var(--theme-pattern);
+background-size: 18px 18px;
+transition: background-color 0.3s ease;
+}
+.comic-card {
+background: var(--theme-card);
+border: 3px solid #121212;
+box-shadow: 5px 5px 0px #121212;
+}
+body.theme-cyberpunk .comic-card {
+border-color: #38bdf8;
+box-shadow: 5px 5px 0px #38bdf8;
+color: #f8fafc;
+}
+.comic-btn-red {
+background-color: var(--theme-accent);
+color: #FFFFFF;
+font-family: 'Bangers', cursive;
+letter-spacing: 1px;
+font-size: 1.2rem;
+border: 3px solid #121212;
+box-shadow: 4px 4px 0px #121212;
+transition: all 0.1s ease;
+}
+.comic-btn-red:active {
+transform: translate(2px, 2px);
+box-shadow: 2px 2px 0px #121212;
+}
+.comic-badge {
+border: 2px solid #121212;
+box-shadow: 2px 2px 0px #121212;
+font-family: 'Bangers', cursive;
+letter-spacing: 0.6px;
+}
+.page-section {
+display: none;
+animation: fadeIn 0.2s ease-out forwards;
+}
+.page-section.active {
+display: block;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(6px); }
+to { opacity: 1; transform: translateY(0); }
+}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: #121212; border-radius: 3px; }
+</style>
+</head>
+<body class="min-h-screen flex flex-col pb-28">
+<!-- MODAL -->
+<div id="customModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden">
+<div class="absolute inset-0 bg-black/70 backdrop-blur-sm" onclick="closeModal()"></div>
+<div class="comic-card rounded-2xl p-6 max-w-sm w-full relative z-10 text-center space-y-4 bg-white">
+<div class="w-14 h-14 rounded-full bg-comicYellow text-comicDark mx-auto flex items-center justify-center text-2xl font-bold border-3 border-comicDark shadow-[2px_2px_0px_#121212]">
+<i class="fa-solid fa-bolt"></i>
+</div>
+<h3 id="modalTitle" class="font-comic text-3xl tracking-wide text-comicDark">NEXUS INFO</h3>
+<p id="modalDesc" class="text-xs text-slate-700 leading-relaxed font-medium"></p>
+<button onclick="closeModal()" class="w-full comic-btn-red py-2.5 rounded-xl">MENGERTI!</button>
+</div>
+</div>
+<!-- HEADER -->
+<header class="sticky top-0 z-40 backdrop-blur-md border-b-4 border-comicDark px-4 py-3 bg-white/90">
+<div class="max-w-2xl mx-auto flex items-center justify-between">
+<div onclick="switchPage('home')" class="cursor-pointer flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-xl bg-comicDark border-2 border-comicDark flex items-center justify-center font-comic text-xl text-comicYellow shadow-[2px_2px_0px_#EF4444]">NX</div>
+<div>
+<h1 class="font-comic text-2xl tracking-wide text-comicDark leading-none">NEXUS STORE</h1>
+<p class="font-mono text-[9px] text-comicRed font-extrabold uppercase tracking-widest mt-0.5">APK BUG & PREMIUM</p>
+</div>
+</div>
+<button onclick="toggleDrawer()" class="w-10 h-10 rounded-xl comic-card bg-white flex items-center justify-center text-comicDark text-lg shadow-[2px_2px_0px_#121212]">
+<i class="fa-solid fa-bars"></i>
+</button>
+</div>
+</header>
+<!-- DRAWER -->
+<div id="navDrawer" class="fixed inset-0 z-50 hidden">
+<div onclick="toggleDrawer()" class="absolute inset-0 bg-black/75 backdrop-blur-sm"></div>
+<div class="relative w-72 max-w-[82vw] h-full bg-[#FDFBF7] border-r-4 border-comicDark p-5 flex flex-col justify-between shadow-2xl">
+<div>
+<div class="flex items-center justify-between pb-4 mb-5 border-b-3 border-comicDark">
+<span class="font-comic text-2xl text-comicDark tracking-wider">MENU NEXUS</span>
+<button onclick="toggleDrawer()" class="w-8 h-8 rounded-lg comic-card bg-white flex items-center justify-center text-comicDark"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<nav class="space-y-2.5 font-comic text-xl">
+<button onclick="switchPage('home'); toggleDrawer();" class="w-full text-left px-4 py-2.5 rounded-xl comic-card bg-white text-comicDark flex items-center gap-3"><i class="fa-solid fa-house w-5 text-red-600"></i> Beranda</button>
+<button onclick="switchPage('catalog'); toggleDrawer();" class="w-full text-left px-4 py-2.5 rounded-xl comic-card bg-comicYellow text-comicDark flex items-center gap-3"><i class="fa-solid fa-list-ul w-5 text-black"></i> Daftar Harga</button>
+<button onclick="switchPage('testi'); toggleDrawer();" class="w-full text-left px-4 py-2.5 rounded-xl comic-card bg-white text-comicDark flex items-center gap-3"><i class="fa-solid fa-star w-5 text-amber-500"></i> Testimoni</button>
+<button onclick="switchPage('contact'); toggleDrawer();" class="w-full text-left px-4 py-2.5 rounded-xl comic-card bg-white text-comicDark flex items-center gap-3"><i class="fa-brands fa-whatsapp w-5 text-emerald-600"></i> Tanya Admin</button>
+</nav>
+</div>
+<div class="pt-4 border-t-3 border-comicDark font-mono text-[11px] text-slate-800 bg-yellow-100 p-3 rounded-xl comic-card">
+<p class="font-extrabold text-comicRed mb-1">⚡ INFO STORE:</p>
+<p>Proses instan kurang dari 5 menit setelah pembayaran QRIS dikonfirmasi.</p>
+</div>
+</div>
+</div>
+<main class="flex-1 w-full max-w-2xl mx-auto px-4 pt-4 space-y-5">
+<!-- 1. BERANDA -->
+<section id="page-home" class="page-section active space-y-4">
+<div class="comic-card rounded-3xl p-6 relative overflow-hidden">
+<div class="inline-block comic-badge bg-comicYellow px-3 py-1 text-xs rounded-lg mb-2 text-slate-900">⚡ UPDATE TIAP HARI • FILE TERUJI</div>
+<h2 class="font-comic text-3xl sm:text-4xl leading-tight mb-2 tracking-wide">
+BIG LIST APK & 
+<span class="text-comicRed bg-yellow-200 px-1 rounded">TOOLS DIGITAL</span>
+</h2>
+<p class="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed mb-4">
+Semua aplikasi dan tools digital terlengkap siap pakai. Pilih itemnya, bayar via QRIS, lalu file langsung dikirim admin lewat chat — proses instan & anti ribet!
+</p>
+<div class="space-y-3">
+<button onclick="switchPage('catalog')" class="w-full comic-btn-red py-3.5 rounded-2xl text-center flex items-center justify-center gap-2">
+<i class="fa-solid fa-download"></i> Lihat Katalog Lengkap
+</button>
+<button onclick="switchPage('contact')" class="w-full comic-card bg-white text-comicDark font-comic text-xl tracking-wide py-3 rounded-2xl text-center flex items-center justify-center gap-2">
+<i class="fa-brands fa-whatsapp text-emerald-600"></i> Tanya Admin
+</button>
+</div>
+</div>
+</section>
+<!-- 2. KATALOG -->
+<section id="page-catalog" class="page-section space-y-4">
+<div class="comic-card rounded-3xl p-4 space-y-3">
+<div class="relative">
+<input type="text" id="searchInput" onkeyup="filterItems()" placeholder="Cari nama APK atau tools..." class="w-full comic-card rounded-xl px-4 py-2.5 pl-10 text-xs font-semibold focus:outline-none">
+<i class="fa-solid fa-magnifying-glass text-slate-400 absolute left-3.5 top-3 text-xs"></i>
+</div>
+<div class="flex flex-wrap gap-1.5">
+<button onclick="setCategory('semua')" id="cat-semua" class="cat-btn comic-badge bg-comicDark text-white px-3 py-1.5 rounded-lg text-xs">SEMUA</button>
+<button onclick="setCategory('bug')" id="cat-bug" class="cat-btn comic-badge bg-white text-comicDark px-3 py-1.5 rounded-lg text-xs">APK BUG</button>
+<button onclick="setCategory('premiere')" id="cat-premiere" class="cat-btn comic-badge bg-white text-comicDark px-3 py-1.5 rounded-lg text-xs">APK & TOOLS</button>
+<button onclick="setCategory('web')" id="cat-web" class="cat-btn comic-badge bg-white text-comicDark px-3 py-1.5 rounded-lg text-xs">WEB & NOKOS</button>
+<button onclick="setCategory('script')" id="cat-script" class="cat-btn comic-badge bg-white text-comicDark px-3 py-1.5 rounded-lg text-xs">SCRIPT & PANEL</button>
+<button onclick="setCategory('promo')" id="cat-promo" class="cat-btn comic-badge bg-white text-comicDark px-3 py-1.5 rounded-lg text-xs">PROMO</button>
+</div>
+</div>
+<div id="catalogGrid" class="space-y-4"></div>
+</section>
+<!-- 3. PEMBAYARAN -->
+<section id="page-payment" class="page-section space-y-4">
+<button onclick="switchPage('catalog')" class="comic-card px-4 py-2 rounded-xl text-xs font-comic"><i class="fa-solid fa-arrow-left mr-1"></i> KEMBALI</button>
+<div class="comic-card rounded-2xl p-4">
+<div class="font-mono text-[10px] text-slate-500 uppercase font-bold">Item yang Dipilih:</div>
+<h3 id="payTitle" class="font-comic text-2xl mt-0.5">Nama Item</h3>
+<p id="payDesc" class="text-xs text-slate-600 font-medium mt-1"></p>
+</div>
+<div class="rounded-3xl p-5 bg-[#16110E] text-white border-4 border-comicDark shadow-[6px_6px_0px_#121212] space-y-4 text-center">
+<h3 class="font-comic text-2xl tracking-wide">SCAN QR PEMBAYARAN</h3>
+<div class="bg-white p-4 rounded-2xl inline-block border-3 border-comicDark">
+<img id="displayQrisImg" src="" alt="QRIS" class="w-56 h-56 mx-auto object-contain rounded-lg" style="image-rendering: pixelated; image-rendering: crisp-edges;">
+</div>
+<div id="payPrice" class="font-comic text-3xl text-comicRed">Rp 2.000</div>
+</div>
+<a id="waCheckoutBtn" href="https://wa.me/6285198124449" target="_blank" class="block w-full py-4 rounded-2xl font-comic text-2xl comic-btn-red text-center">
+<i class="fa-brands fa-whatsapp mr-1.5"></i> KIRIM BUKTI KE ADMIN WA
+</a>
+</section>
+<!-- 4. TESTIMONI -->
+<section id="page-testi" class="page-section space-y-4">
+<div class="comic-card rounded-2xl p-4">
+<h2 class="font-comic text-3xl">Ulasan Pelanggan Setia</h2>
+<p class="text-xs text-slate-600 font-medium">Bukti transaksi cepat dan terpercaya.</p>
+</div>
+<div class="comic-card rounded-2xl p-4">
+<div class="font-comic text-xl">@zayn_edits</div>
+<p class="text-xs text-slate-700 mt-1">"Ambil paket borongan All APK Pack cuma 10k dapet semua tools lengkap. Admin gercep!"</p>
+</div>
+</section>
+<!-- 5. KONTAK & ADMIN LOGIN -->
+<section id="page-contact" class="page-section space-y-4">
+<div class="comic-card rounded-2xl p-5 text-center space-y-3">
+<h3 class="font-comic text-2xl">WhatsApp Admin Resmi</h3>
+<p class="font-mono font-extrabold text-emerald-600 text-lg">0851-9812-4449</p>
+<a href="https://wa.me/6285198124449" target="_blank" class="block w-full comic-btn-red py-3 rounded-xl">CHAT WHATSAPP</a>
+</div>
+<div class="comic-card rounded-3xl p-6 space-y-3">
+<h3 class="font-comic text-2xl">LOGIN ADMIN PANEL</h3>
+<input type="password" id="adminPassInput" placeholder="Ketik sandi admin..." class="w-full comic-card rounded-xl px-4 py-3 text-xs font-mono text-center font-bold tracking-widest focus:outline-none">
+<button onclick="verifyAdminLogin()" class="w-full comic-btn-red py-3 rounded-xl text-lg">MASUK PANEL</button>
+</div>
+</section>
+<!-- 6. ADMIN PANEL DASHBOARD -->
+<section id="page-admin" class="page-section space-y-4">
+<button onclick="switchPage('contact')" class="comic-card px-4 py-2 rounded-xl text-xs font-comic"><i class="fa-solid fa-arrow-left mr-1"></i> KELUAR</button>
+<div class="comic-card rounded-3xl p-5 space-y-4">
+<h3 class="font-comic text-2xl">1. GANTI TEMA & WARNA</h3>
+<div class="grid grid-cols-2 gap-2">
+<button onclick="setTheme('default')" class="comic-card p-3 rounded-xl text-xs font-comic bg-[#FDFBF7]">☀️ Retro Comic</button>
+<button onclick="setTheme('cyberpunk')" class="comic-card p-3 rounded-xl text-xs font-comic bg-slate-900 text-sky-400">🌌 Cyberpunk</button>
+<button onclick="setTheme('mint')" class="comic-card p-3 rounded-xl text-xs font-comic bg-emerald-50 text-emerald-800">🌿 Mint Green</button>
+<button onclick="setTheme('sunset')" class="comic-card p-3 rounded-xl text-xs font-comic bg-rose-50 text-rose-800">🌅 Sunset</button>
+</div>
+</div>
+<div class="comic-card rounded-3xl p-5 space-y-4">
+<h3 class="font-comic text-2xl">2. UBAH & PERBAIKI QRIS</h3>
+<input type="file" id="qrisFileInput" accept="image/*" class="w-full text-xs">
+<input type="text" id="qrisUrlInput" placeholder="Atau URL Gambar QRIS..." class="w-full comic-card rounded-xl px-3 py-2 text-xs font-mono">
+<button onclick="saveNewQris()" class="w-full comic-btn-red py-3 rounded-xl">SIMPAN QRIS</button>
+</div>
+<div class="comic-card rounded-3xl p-5 space-y-4">
+<h3 class="font-comic text-2xl">3. TAMBAH PRODUK BARU</h3>
+<input type="text" id="newProdTitle" placeholder="Nama Produk..." class="w-full comic-card rounded-xl px-3 py-2 text-xs">
+<select id="newProdCategory" class="w-full comic-card rounded-xl px-3 py-2 text-xs">
+<option value="bug">APK Bug</option>
+<option value="premiere">APK & Tools</option>
+<option value="web">Web & Nokos</option>
+<option value="script">Script Bot</option>
+<option value="promo">Special Promo</option>
+</select>
+<input type="text" id="newProdBadge" placeholder="Badge (Cth: APK BUG)" value="APK BUG" class="w-full comic-card rounded-xl px-3 py-2 text-xs">
+<textarea id="newProdDesc" rows="2" placeholder="Deskripsi..." class="w-full comic-card rounded-xl px-3 py-2 text-xs"></textarea>
+<div class="grid grid-cols-2 gap-2">
+<input type="text" id="newProdVariantName" placeholder="Varian..." value="Permanent" class="comic-card rounded-xl px-3 py-2 text-xs">
+<input type="text" id="newProdVariantPrice" placeholder="Harga (Rp...)" value="Rp 5.000" class="comic-card rounded-xl px-3 py-2 text-xs">
+</div>
+<button onclick="addNewProduct()" class="w-full comic-btn-red py-3 rounded-xl">TAMBAH PRODUK</button>
+</div>
+<div class="comic-card rounded-3xl p-5 space-y-4">
+<h3 class="font-comic text-2xl">4. ATUR HARGA & HAPUS</h3>
+<div id="adminProductList" class="space-y-2 max-h-72 overflow-y-auto"></div>
+</div>
+</section>
+</main>
+<!-- BOTTOM NAV -->
+<nav class="fixed bottom-0 left-0 right-0 z-40 backdrop-blur-md border-t-4 border-comicDark px-2 py-2 bg-white/95">
+<div class="max-w-2xl mx-auto grid grid-cols-4 gap-1.5">
+<button onclick="switchPage('home')" id="bnav-home" class="bnav-btn rounded-xl py-2 flex flex-col items-center justify-center text-comicDark font-bold bg-comicYellow border-2 border-comicDark shadow-[2px_2px_0px_#121212]">
+<i class="fa-solid fa-house text-sm mb-0.5"></i><span class="font-comic text-xs">BERANDA</span>
+</button>
+<button onclick="switchPage('catalog')" id="bnav-catalog" class="bnav-btn rounded-xl py-2 flex flex-col items-center justify-center text-slate-600">
+<i class="fa-solid fa-list-check text-sm mb-0.5"></i><span class="font-comic text-xs">KATALOG</span>
+</button>
+<button onclick="switchPage('testi')" id="bnav-testi" class="bnav-btn rounded-xl py-2 flex flex-col items-center justify-center text-slate-600">
+<i class="fa-solid fa-star text-sm mb-0.5"></i><span class="font-comic text-xs">TESTI</span>
+</button>
+<button onclick="switchPage('contact')" id="bnav-contact" class="bnav-btn rounded-xl py-2 flex flex-col items-center justify-center text-slate-600">
+<i class="fa-solid fa-headset text-sm mb-0.5"></i><span class="font-comic text-xs">ADMIN</span>
+</button>
+</div>
+</nav>
+<script>
+const DEFAULT_CATALOG = [
+{
+id: 1, title: 'S4VAGE X NAILONG', category: 'bug', badge: 'APK BUG',
+desc: 'Fitur Bug S4VAGE X Nailong, delay bebas spam & performa stabil.',
+tiers: [{ name: 'Full Update', price: 'Rp 15.000' }, { name: 'Owner', price: 'Rp 55.000' }]
+},
+{
+id: 2, title: 'INFERNA X RAT', category: 'bug', badge: 'APK BUG',
+desc: 'Next-gen cyberpunk marketplace, fitur lengkap, aman & stabil.',
+tiers: [{ name: 'Full Up', price: 'Rp 10.000' }, { name: 'Owner', price: 'Rp 60.000' }]
+},
+{
+id: 3, title: 'APK PIXELLAB COLLECTIONS', category: 'premiere', badge: 'APK & TOOLS',
+desc: 'Koleksi lengkap mod Pixellab siap pakai untuk editor & desainer.',
+tiers: [{ name: 'Pixellab Collector', price: 'Rp 2.000' }, { name: 'Pixellab Mod JB', price: 'Rp 2.000' }]
+},
+{
+id: 4, title: 'CAPCUT PRO & MEDIA', category: 'premiere', badge: 'APK & TOOLS',
+desc: 'Aplikasi hiburan, edit video, dan streaming film kualitas HD.',
+tiers: [{ name: 'CapCut Pro Prem', price: 'Rp 3.000' }, { name: 'Spotify Prem', price: 'Rp 3.000' }]
+},
+{
+id: 5, title: 'WEB SUNTIK & NOKOS', category: 'web', badge: 'WEB & NOKOS',
+desc: 'Akses platform website untuk suntik sosial media dan nomor kosong.',
+tiers: [{ name: 'Web Suntik Sosmed 1', price: 'Rp 2.000' }, { name: 'Web Create Nokos Free', price: 'Rp 3.000' }]
+},
+{
+id: 6, title: 'SCRIPT BOT & PANEL', category: 'script', badge: 'SCRIPT BOT',
+desc: 'Source code bot WhatsApp, panel hosting full button, dan script no enc.',
+tiers: [{ name: 'SC Panel Full Button', price: 'Rp 5.000' }, { name: 'SC MarinKitagawa-MD', price: 'Rp 10.000' }]
+},
+{
+id: 7, title: 'ALL APK PACK (PROMO)', category: 'promo', badge: 'PROMO HARIAN',
+desc: 'Paket spesial borongan seluruh aplikasi dan tools digital dalam satu harga.',
+tiers: [{ name: 'Ambil Semua APK', price: 'Rp 10.000' }]
+}
+];
+let catalogItems = JSON.parse(localStorage.getItem('nexus_catalog')) || DEFAULT_CATALOG;
+let currentCategory = 'semua';
+const defaultQrisImage = "69654.jpg";
+function showModal(title, desc) {
+document.getElementById('modalTitle').textContent = title;
+document.getElementById('modalDesc').textContent = desc;
+document.getElementById('customModal').classList.remove('hidden');
+}
+function closeModal() { document.getElementById('customModal').classList.add('hidden'); }
+function toggleDrawer() { document.getElementById('navDrawer').classList.toggle('hidden'); }
+function switchPage(pageName) {
+document.querySelectorAll(".page-section").forEach(sec => sec.classList.remove("active"));
+document.getElementById(page-${pageName}).classList.add("active");
+document.querySelectorAll(".bnav-btn").forEach(btn => {
+btn.className = "bnav-btn rounded-xl py-2 flex flex-col items-center justify-center text-slate-600";
+});
+const activeNav = document.getElementById(bnav-${pageName});
+if(activeNav) {
+activeNav.className = "bnav-btn rounded-xl py-2 flex flex-col items-center justify-center text-comicDark font-bold bg-comicYellow border-2 border-comicDark shadow-[2px_2px_0px_#121212]";
+}
+window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function setCategory(cat) {
+currentCategory = cat;
+document.querySelectorAll(".cat-btn").forEach(b => {
+b.className = "cat-btn comic-badge bg-white text-comicDark px-3 py-1.5 rounded-lg text-xs";
+});
+document.getElementById(cat-${cat}).className = "cat-btn comic-badge bg-comicDark text-white px-3 py-1.5 rounded-lg text-xs";
+filterItems();
+}
+function renderCatalog(items) {
+const grid = document.getElementById("catalogGrid");
+if(items.length === 0) {
+grid.innerHTML = <div class="comic-card rounded-2xl p-6 text-center text-slate-500 font-comic text-xl bg-white">TIDAK ADA ITEM</div>;
+return;
+}
+grid.innerHTML = items.map(app => <div class="comic-card rounded-3xl p-4 sm:p-5 space-y-3"> <div class="flex items-center justify-between"> <spa
